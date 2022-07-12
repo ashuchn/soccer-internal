@@ -144,7 +144,6 @@ class MainController extends Controller
     }
 
 
-    
     public function mainDashboard($leagueId, $teamId)
     {
         return view('admin.mainDashboard', [ 'leagueId' => $leagueId, 'teamId' => $teamId ]);
