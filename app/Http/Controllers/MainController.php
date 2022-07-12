@@ -17,6 +17,9 @@ class MainController extends Controller
     public function login(Request $request)
     {
         if( $request->isMethod('get') ) {
+            if(session::has('userId')){
+                return redirect()->route('dashboard');
+            }
             return view('admin.login');
         } else {
             $email = $request->email;
@@ -83,19 +86,10 @@ class MainController extends Controller
 
             $leagueName = $request->leagueName;
 
-            /**generate random string */
-            $length = 50;
-			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-			$charactersLength = strlen($characters);
-			$randomString = '';
-			for ($i = 0; $i < $length; $i++) {
-			    $randomString .= $characters[rand(0, $charactersLength - 1)];
-			}
 
             $insert = new League;
             $insert->leagueName = $leagueName;
             $insert->userId = session('userId');
-            $insert->draftId = $randomString;
             $insert->save();
 
             if($insert)
@@ -168,7 +162,102 @@ class MainController extends Controller
 
     public function addPlayerToDraft($leagueId, $teamId, $draftId, $playerId)
     {
-        
     }
+
+
+
+
+    /** total90 code */
+
+
+    function draft($leagueId, $teamId)
+        {
+            /** user id who is drafting draft */
+            $length = 50;
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			$charactersLength = strlen($characters);
+			$randomString = '';
+			for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+			}
+			$randomString;
+            $userId = session('userId');
+
+
+            $userinfo2 = DB::table('draft_league')->where('user_id',$userId)->where('league_id',$leagueId)->exists();
+            if($userinfo2){
+                    $draftId = DB::table('draft_league')
+            ->where('user_id',$userId)->where('league_id',$leagueId)->where('team_id',$teamId)->pluck('draft_id');
+            
+            /** returns the league details */
+            $league = DB::table('leagues')->where('id', $leagueId)->get(); 
+            
+
+            /** returns teams in a league */
+            $teamCount = DB::table('draft_league')->where('league_id', $leagueId)->count(); 
+
+            return view('admin.draft.dashboard',[
+                // 'userId' => $userId,
+                'teamId' => $teamId,
+                'league' => $league,
+                'teamCount' => $teamCount,
+                'draftId' => $draftId
+            ]);
+
+            }
+
+
+            $userinfo = DB::table('draft_league')->where('user_id',$userId)->where('league_id',$leagueId)->where('team_id',$teamId)->exists();
+            if($userinfo){
+            echo 'none';
+            }else{
+                $id = DB::table('draft_league')-> insertGetId(array(
+                    'user_id'=>$userId,
+                    'league_id'=>$leagueId,
+                    'team_id'=>$teamId,
+                    'choose_status'=>0,
+                    'active_status'=>0,
+                    'draft_id'=>$randomString
+                    ));
+
+                    $draftId = DB::table('draft_league')
+            ->where('user_id',$userId)->where('league_id',$leagueId)->where('team_id',$teamId)->pluck('draft_id');
+            
+            /** returns the league details */
+            $league = DB::table('leagues')->where('id', $leagueId)->get(); 
+            
+
+            /** returns teams in a league */
+            $teamCount = DB::table('teams')->where('league_id', $leagueId)->count(); 
+
+            return view('admin.draft.dashboard',[
+                // 'userId' => $userId,
+                'teamId' => $teamId,
+                'league' => $league,
+                'teamCount' => $teamCount,
+                'draftId' => $draftId
+            ]);
+
+            }
+           
+            
+        }
+
+
+        public function start_draft( $leagueId,$draftId) {
+            // return $draftId;
+
+            
+
+            DB::table('draft_league')->where('draft_id', $draftId)->update([
+                "choose_status" => 1
+            ]);
+
+            return redirect()->route('draft-dashboard', [
+                "leagueId" =>$leagueId,
+                "draftId" => $draftId
+            ]);
+
+        }
 
 }
