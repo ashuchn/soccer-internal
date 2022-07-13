@@ -39,8 +39,8 @@ Route::group(['middleware' => ['checkuser']],function(){
 
     Route::get('playDraft/league/{leagueId}/draft/{draftId}', [MainController::class, 'playDraft'])->name('playDraft');
 
-    Route::get('addPlayerToDraft/league/{leagueId}/team/{teamId}/draftId/{draftId}/player/{playerId}', [MainController::class, 'addPlayerToDraft'])->name('addPlayerToDraft');
+    Route::get('addPlayerToDraft/league/{leagueId}/player/{playerId}/draftId/{draftId}', [MainController::class, 'addPlayerToDraft'])->name('addPlayerToDraft');
 
-    Route::get('start-draft/league/{leagueId}/draft/{draftId}', [MainController::class, 'start_draft'])->name('start-draft');
+    Route::get('start-draft/league/{leagueId}/draft/{draftId}',[MainController::class, 'start_draft'])->name('start-draft');
 
 });
