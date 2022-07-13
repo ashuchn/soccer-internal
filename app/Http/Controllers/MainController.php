@@ -123,6 +123,7 @@ class MainController extends Controller
             $insert = new Team;
             $insert->teamName = $request->teamName;
             $insert->leagueId = $request->leagueId;
+            $insert->userId = session('userId');
             $insert->save();
 
             if($insert)
@@ -143,35 +144,95 @@ class MainController extends Controller
         return view('admin.mainDashboard', [ 'leagueId' => $leagueId, 'teamId' => $teamId ]);
     }
 
-    /** draft 1st page */
-    public function draftDashboard($leagueId, $teamId)
-    {
-        $league = League::where('id', $leagueId)->get();
-        $teamCount = Team::where('leagueId', $leagueId)->count();
 
-        return view('admin.draft.dashboard', ['league' => $league,'teamId' => $teamId ,'teamCount' => $teamCount]);
-
-    }
-
+    
+    // public function playDraft($leagueId, $teamId)
+    // {
+    //     $league = League::where('id', $leagueId)->get();
+    //     $players = Player::all();
+    //     return view('admin.draft.play', ['players' => $players ,  'league' => $league, 'teamId' => $teamId ]);
+    // }
 
     /** draft 2nd page */
-    public function playDraft($leagueId, $teamId)
-    {
-        $league = League::where('id', $leagueId)->get();
-        $players = Player::all();
-        return view('admin.draft.play', ['players' => $players ,  'league' => $league, 'teamId' => $teamId ]);
-    }
+    public function playDraft($leagueId, $draftId)
+        {
+            
+            // return [
+            //     "leagueid" => $leagueId,
+            //     "teamId" => $teamId,
+            //     "userId" => Auth::id()
+            // ];
 
-    public function addPlayerToDraft($leagueId, $teamId, $draftId, $playerId)
-    {
-    }
+                $team = DB::table('teams')->where('leagueId', $leagueId)->where('userId', session('userId'))->get(); 
+                $teamCount = DB::table('teams')->where('leagueId', $leagueId)->where('userId', session('userId'))->count();
+                $league = DB::table('leagues')->where('id', $leagueId)->get(); 
+                // exit($league);
+                $players = DB::table('players')->where('active', 0)->get();
+
+
+                /**my team players */
+
+                // $goalKeeper = DB::table('draft_player_selection as selection')
+                //                 ->join('players', 'players.id','=','selection.playerId')
+                //                 ->where('leagueId','=',$leagueId)
+                //                 ->where('teamId','=',$teamId)
+                //                 ->where('userId','=', Auth::id() )
+                //                 ->where('position','=','Goalkeeper')
+                //                 ->get('players.playerName');
+
+
+                // $defender = DB::table('draft_player_selection as selection')
+                //                 ->join('players', 'players.id','=','selection.playerId')
+                //                 ->where('leagueId','=',$leagueId)
+                //                 ->where('teamId','=',$teamId)
+                //                 ->where('userId','=', Auth::id() )
+                //                 ->where('players.position','=','Defender')
+                //                 ->get('players.playerName');
+
+
+                // $midfielder = DB::table('draft_player_selection as selection')
+                //                 ->join('players', 'players.id','=','selection.playerId')
+                //                 ->where('leagueId','=',$leagueId)
+                //                 ->where('teamId','=',$teamId)
+                //                 ->where('userId','=', Auth::id() )
+                //                 ->where('players.position','=','Midfielder')
+                //                 ->get('players.playerName');
+
+
+                // $forward = DB::table('draft_player_selection as selection')
+                //                 ->join('players', 'players.id','=','selection.playerId')
+                //                 ->where('leagueId','=',$leagueId)
+                //                 ->where('teamId','=',$teamId)
+                //                 ->where('userId','=', Auth::id() )
+                //                 ->where('players.position','=','forward')
+                //                 ->get('players.playerName');
+                
+                
+                                // return $defender;
+
+                                $darft_list = DB::table('draft_league')->where('league_id', $leagueId)->get();
+
+                                $draft_player = DB::table('draft_player_selection')->orderBy('id','asc')->where('leagueId', $leagueId)->get();
+
+                return view('admin.draft.play', [
+                    "players" => $players,
+                    "draft_list" => $darft_list,
+                    "draft_player" => $draft_player,
+                    "league" => $league,
+                    "userId" => session('userId'),
+                    "draftId"=> $draftId
+                ]);
+
+        }
+
+    
 
 
 
 
     /** total90 code */
 
-
+    /** draft 1st page */
     function draft($leagueId, $teamId)
         {
             /** user id who is drafting draft */
@@ -230,7 +291,7 @@ class MainController extends Controller
             
 
             /** returns teams in a league */
-            $teamCount = DB::table('teams')->where('league_id', $leagueId)->count(); 
+            $teamCount = DB::table('teams')->where('leagueId', $leagueId)->count(); 
 
             return view('admin.draft.dashboard',[
                 // 'userId' => $userId,
@@ -246,6 +307,9 @@ class MainController extends Controller
         }
 
 
+        
+
+        
         public function start_draft( $leagueId,$draftId) {
             // return $draftId;
 
@@ -255,11 +319,46 @@ class MainController extends Controller
                 "choose_status" => 1
             ]);
 
-            return redirect()->route('draft-dashboard', [
+            return redirect()->route('playDraft', [
                 "leagueId" =>$leagueId,
                 "draftId" => $draftId
             ]);
 
+        }
+
+        public function addPlayerToDraft($leagueId, $playerId, $draftId)
+        {
+
+            $result1 = DB::table('draft_league')->where('draft_id',$draftId)->get();
+            $result1_id =  $result1[0]->id;
+
+            DB::table('draft_league')->where('id',$result1_id)->update(
+                array('active_status'=>'1'));
+        
+
+            $result2 = DB::table('draft_league')->where('league_id',$leagueId)->where('choose_status',0)->orderBy('id','asc')->limit(1)->get();
+            $choose_id =  $result2[0]->id;
+
+                DB::table('draft_league')->where('id',$choose_id)->update(
+                    array('choose_status'=>'1'));
+           
+                DB::table('draft_player_selection')->insert([
+                    "leagueId" => $leagueId,
+                    //"teamId" => $teamId,
+                    "teamId" => "1",
+                    "playerId" => $playerId,
+                    "userId" => session('userId')
+                   ]);
+
+                   DB::table('players')->where('id', $playerId)->update([
+                    "active" => 1
+                   ]);
+
+        // return "player added";
+            return redirect()->route('playDraft', [
+                "leagueId" =>$leagueId,
+                "draftId" => $draftId
+            ]);
         }
 
 }

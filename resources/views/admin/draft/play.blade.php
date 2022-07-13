@@ -31,7 +31,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-7 col-md-7 col-sm-12">
-            <h2>{{ $league[0]->name }}</h2>
+            <h2>{{ $league[0]->leagueName }}</h2>
             <span><span class="round"></span> Teams</span>
             <span><span class="round">(0)</span> Rounds</span>
         </div>
@@ -70,7 +70,9 @@
   <div class="draft-team-name">
     <p><?php $result = DB::table('teams')->where('id',$orderDetails->team_id)->get();
     
-  echo  $result[0]->name;         ?></p>
+  echo  $result[0]->teamName;
+  //;exit()
+           ?></p>
   </div>
   @endforeach	
 
@@ -189,12 +191,12 @@
     </div>
 </section> -->
 
-      <?php $result = DB::table('draft_league')->where('user_id', Auth::id())->where('draft_id',$draftId)->get();
+      <?php $result = DB::table('draft_league')->where('user_id', session('userId'))->where('draft_id',$draftId)->get();
       $choose_status =  $result[0]->choose_status;
       $active_status =  $result[0]->active_status;
       ?>  
 
-<?php $result2 = DB::table('draft_league')->where('user_id', Auth::id())->where('league_id',$league[0]->id)->orderBy('id','asc')->limit(1)->get();
+<?php $result2 = DB::table('draft_league')->where('user_id', session('userId'))->where('league_id',$league[0]->id)->orderBy('id','asc')->limit(1)->get();
       if($choose_id =  $result2[0]->id)
       // // $choose_id =  $result2[0]->id;
       // echo $result2;
@@ -236,7 +238,7 @@
                                         <td><button type="button" class="btn btn-outline-primary" disabled>Picked</button></td>
                                     @else
                                         <td>
-                                            <a href="{{ route('draft-player-add', ['leagueId' => $league[0]->id, 'playerId'=>$rows->id, 'draftId' => $draftId ]) }}">
+                                            <a href="{{ route('addPlayerToDraft', ['leagueId' => $league[0]->id, 'playerId'=>$rows->id, 'draftId' => $draftId ]) }}">
                                                 <button type="button" class="btn btn-outline-primary">Unpicked</button>
                                             </a>
                                         </td>
