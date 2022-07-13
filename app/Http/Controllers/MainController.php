@@ -143,7 +143,7 @@ class MainController extends Controller
         return view('admin.mainDashboard', [ 'leagueId' => $leagueId, 'teamId' => $teamId ]);
     }
 
-
+    /** draft 1st page */
     public function draftDashboard($leagueId, $teamId)
     {
         $league = League::where('id', $leagueId)->get();
@@ -153,6 +153,8 @@ class MainController extends Controller
 
     }
 
+
+    /** draft 2nd page */
     public function playDraft($leagueId, $teamId)
     {
         $league = League::where('id', $leagueId)->get();
