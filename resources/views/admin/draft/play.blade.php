@@ -31,15 +31,15 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-7 col-md-7 col-sm-12">
-            <h2>League Name</h2>
+            <h2>{{ $league[0]->leagueName }}</h2>
             <span><span class="round"></span> Teams</span>
             <span><span class="round">(0)</span> Rounds</span>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-12 text-right">
             <!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#myModalshare">Share</button> -->
-            {{--<a href="{{ route('start-draft', ['draftId' => $league[0]->draftId , 'leagueId' => $league[0]->id ]) }}">
+            <a href="{{ route('start-draft', ['draftId' => $draftId , 'leagueId' => $league[0]->id ]) }}">
               <button type="button" class="btn btn-outline-primary">Start</button>
-            </a>--}}
+            </a>
             
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12">
@@ -54,91 +54,58 @@
     </div>
 </div>
 </section>
+
+
+
+
+
 <section class="draft-board">
   <div class="container">
     <div class="row">
-      <div class="col-lg-12">
 
-      {{--@foreach($draft_list as $key => $orderDetails)
-      
-        <div class="draft-team-name">
-          <p><?php $result = DB::table('teams')->where('id',$orderDetails->team_id)->get();
-          
-        echo  $result[0]->name;         ?></p>
-        </div>
-        @endforeach	 --}}
+    <div class="col-lg-12">
 
-       
+@foreach($draft_list as $key => $orderDetails)
 
-      </div>
-      <div class="col-lg-12">
+  <div class="draft-team-name">
+    <p><?php $result = DB::table('teams')->where('id',$orderDetails->team_id)->get();
+    
+  echo  $result[0]->teamName;
+  //;exit()
+           ?></p>
+  </div>
+  @endforeach	
+
+ 
+
+</div>
+	  
 
         
-      <?php $i = 1; ?>
-       {{-- @foreach($draft_list as $key => $orderDetails)
         
-        <div  class="draft-box" style="background:<?php if($orderDetails->choose_status==$orderDetails->active_status){echo 'grey';}else{echo 'red';} ?>">
-          <div class="timer">
-            <!-- <span class="minutes">01</span>:<span class="seconds">00</span> -->
-          </div>
-          <!-- <audio id="timer-beep">
-            <source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/41203/beep.mp3"/>
-            <source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/41203/beep.ogg" />
-          </audio> -->
-        </div>
-      @endforeach	--}}
+	  
+      <div class="col-lg-12">
 
-       
-
-      {{--
-        <div class="draft-box">
-          
-        </div>
-        <div class="draft-box">
-          
-        </div>
-        <div class="draft-box">
-         
-        </div>
-        <div class="draft-box" style="background:grey;">
-          
-          <div class="timer">
-            <span class="minutes">01</span>:<span class="seconds">00</span>
+        @foreach($draft_player as $key => $orderDetails)
+          <div class="draft-box">
+            <h4><?php
+            $result = DB::table('players')->where('id',$orderDetails->playerId)->get();
+            echo  $result[0]->playerName; ?></h4>
+            <p><?php echo  $result[0]->position; ?> <span><?php echo  $result[0]->score; ?></span></p>
+            
           </div>
-          <audio id="timer-beep">
-            <source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/41203/beep.mp3"/>
-            <source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/41203/beep.ogg" />
-          </audio>
-        </div>
-        <div class="draft-box">
-          <h4>Adam Thielen</h4>
-          <p>Min - WR <span>10.06</span></p>
-        </div>
-        <div class="draft-box">
-          <h4>Cordarrelle Patterson</h4>
-          <p>Atl - Rb <span>10.05</span></p>
-        </div>
-        <div class="draft-box">
-          <h4>Devonta Smith</h4>
-          <p>phi - WR <span>10.04</span></p>
-        </div>
-        <div class="draft-box">
-          <h4>Robert Woods</h4>
-          <p>ten - WR <span>10.03</span></p>
-        </div>
-        <div class="draft-box">
-          <h4>Tyler Lockett</h4>
-          <p>sea - WR <span>10.02</span></p>
-        </div>
-        <div class="draft-box">
-          <h4>Brandon Aiyuk</h4>
-          <p>SF - WR <span>10.01</span></p>
-        </div> --}}
+
+        @endforeach	
 
       </div>
+	  
+	  
     </div>
   </div>
 </section>
+
+
+
 <!-- <section class="team">
     <div class="container">
         <div class="row">
@@ -224,20 +191,18 @@
     </div>
 </section> -->
 
-      <?php 
-    //   $result = DB::table('draft_league')->where('user_id', Auth::id())->where('draft_id',$draftId)->get();
-    //   $choose_status =  $result[0]->choose_status;
-    //   $active_status =  $result[0]->active_status;
+      <?php $result = DB::table('draft_league')->where('user_id', session('userId'))->where('draft_id',$draftId)->get();
+      $choose_status =  $result[0]->choose_status;
+      $active_status =  $result[0]->active_status;
       ?>  
 
-<?php 
-// $result2 = DB::table('draft_league')->where('user_id', Auth::id())->where('league_id',$league[0]->id)->orderBy('id','asc')->limit(1)->get();
-//       if($choose_id =  $result2[0]->id)
+<?php $result2 = DB::table('draft_league')->where('user_id', session('userId'))->where('league_id',$league[0]->id)->orderBy('id','asc')->limit(1)->get();
+      if($choose_id =  $result2[0]->id)
       // // $choose_id =  $result2[0]->id;
       // echo $result2;
       ?>  
 
-<section class="all-player" style="display:<?php #if($choose_status == $active_status ){echo 'none';}else{echo 'block';} ?>">
+<section class="all-player" style="display:<?php if($choose_status == $active_status ){echo 'none';}else{echo 'block';} ?>">
     <div class="container">
         <div class="row">
             
@@ -273,7 +238,7 @@
                                         <td><button type="button" class="btn btn-outline-primary" disabled>Picked</button></td>
                                     @else
                                         <td>
-                                            <a href="{{ route('addPlayerToDraft', ['leagueId' => $league[0]->id, 'playerId'=>$rows->id, 'teamId'=> $teamId , 'draftId' => $league[0]->draftId ]) }}">
+                                            <a href="{{ route('addPlayerToDraft', ['leagueId' => $league[0]->id, 'playerId'=>$rows->id, 'draftId' => $draftId ]) }}">
                                                 <button type="button" class="btn btn-outline-primary">Unpicked</button>
                                             </a>
                                         </td>

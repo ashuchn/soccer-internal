@@ -6,8 +6,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url('css/style.css') }}">
-  <link rel="stylesheet" href="{{ url('css/responsive.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -31,7 +31,7 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
-        <h2>{{ $league[0]->leagueName }}</h2>
+        <h2>{{ $league[0]->name }}</h2>
         <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fermentum nec ex eget consequat. Donec ut aliquam justo.
         </p>
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="col-lg-12">
-        <button type="button" class="btn btn-primary"><a href="{{ route('playDraft' , ['leagueId' =>$league[0]->id , 'teamId' => $teamId  ])  }}">Play in the League</a></button>
+        <button type="button" class="btn btn-primary"><a href="{{ route('playDraft', ['leagueId' => $league[0]->id, 'draftId' => $draftId[0]]) }}">Play in the League</a></button>
         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#myModal">Share to a friend</button>
     </div>
   </div>
