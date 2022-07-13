@@ -331,12 +331,12 @@ class MainController extends Controller
 
             $result1 = DB::table('draft_league')->where('draft_id',$draftId)->get();
             $result1_id =  $result1[0]->id;
-
+            
             DB::table('draft_league')->where('id',$result1_id)->update(
                 array('active_status'=>'1'));
-        
+                
 
-            $result2 = DB::table('draft_league')->where('league_id',$leagueId)->where('choose_status',0)->orderBy('id','asc')->limit(1)->get();
+            $result2 = DB::table('draft_league')->where('league_id',$leagueId)->where('choose_status',1)->orderBy('id','asc')->limit(1)->get();
             $choose_id =  $result2[0]->id;
 
                 DB::table('draft_league')->where('id',$choose_id)->update(
