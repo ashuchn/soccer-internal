@@ -128,7 +128,8 @@ class MainController extends Controller
 
             if($insert)
             {
-                return redirect()->back()->with('status', 'Team Added!');
+                // return redirect()->back()->with('status', 'Team Added!');
+                return redirect()->route('leagueDashboard', ['leagueId' => $request->leagueId])->with('status', 'Team Added!');
             } else {
                 return redirect()->back()->with('status', 'Some error occured!');
             }
