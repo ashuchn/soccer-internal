@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -44,3 +45,12 @@ Route::group(['middleware' => ['checkuser']],function(){
     Route::get('start-draft/league/{leagueId}/draft/{draftId}',[MainController::class, 'start_draft'])->name('start-draft');
 
 });
+
+Route::match(['get', 'post'], 'user-login', [ChatController::class, 'user_login' ])->name('user-login');
+
+Route::get('user-dashboard', [ChatController::class, 'user_dashboard' ])->name('user-dashboard');
+Route::get('chat-window/{userId?}', [ChatController::class, 'chat_window' ])->name('chat-window');
+Route::post('send-message', [ChatController::class, 'send_message' ])->name('send-message');
+Route::get('user-logout', [ChatController::class, 'logout' ])->name('user-logout');
+
+
